@@ -18,14 +18,18 @@ class FSBImportOperator(bpy.types.Operator):
                 return
             if(type== "NODE"):
                 bpy.ops.node.add_node(type= xml.nodeName, use_transform=True)
+                node_tree.nodes[-1].name = xml.attributes["name"].value
             elif(type=="LINK"):
                 fromNodeId = xml.attributes["from_node"].value.split("::")[1]
-                fromSocketId = xml.getElementsByTagName("from_socket")[0].childNodes[1].attributes["name"].value
+                fromSocketId = xml.getElementsByTagName("from_socket")[0].childNodes[1].attributes["identifier"].value
                 toNodeId = xml.attributes["to_node"].value.split("::")[1]
-                toSocketId = xml.getElementsByTagName("to_socket")[0].childNodes[1].attributes["name"].value
-
-                fromSocket = node_tree.nodes.get(fromNodeId).outputs[fromSocketId]
-                toSocket = node_tree.nodes.get(toNodeId).inputs[toSocketId]
+                toSocketId = xml.getElementsByTagName("to_socket")[0].childNodes[1].attributes["identifier"].value
+                for inp in node_tree.nodes.get(fromNodeId).outputs:
+                    if(fromSocketId == inp.identifier):
+                        fromSocket = inp
+                for inp in node_tree.nodes.get(toNodeId).inputs:
+                    if(toSocketId == inp.identifier):
+                        toSocket = inp
                 node_tree.links.new(fromSocket,toSocket)
         for xml in nodes_xml.childNodes:
             create(xml, type="NODE")
