@@ -20,7 +20,6 @@
 
 import bpy
 
-
 def build_property_typemap(skip_classes, skip_typemap):
 
     property_typemap = {}
@@ -248,8 +247,7 @@ def rna2xml(
 def xml2rna(
         root_xml, *,
         root_rna=None,  # must be set
-):
-
+):    
     def rna2xml_node(xml_node, value):
         # print("evaluating:", xml_node.nodeName)
 
@@ -297,10 +295,13 @@ def xml2rna(
                                 value_xml_coerce = [{'TRUE': True, 'FALSE': False}[v] for v in value_xml_split]
                         del value_xml_split
                     tp_name = 'ARRAY'
-
 #                print("  %s.%s (%s) --- %s" % (type(value).__name__, attr, tp_name, subvalue_type))
                 try:
                     setattr(value, attr, value_xml_coerce)
+                except AttributeError:
+                    print("AttributeError")
+                except TypeError:
+                    print("TypeError")
                 except ValueError:
                     # size mismatch
                     val = getattr(value, attr)
@@ -313,11 +314,9 @@ def xml2rna(
         # Complex attributes
         for child_xml in xml_node.childNodes:
             if child_xml.nodeType == child_xml.ELEMENT_NODE:
-                print()
                 print(child_xml.nodeName)
                 subvalue = getattr(value, child_xml.nodeName, None)
                 if subvalue is not None:
-
                     elems = []
                     for child_xml_real in child_xml.childNodes:
                         if child_xml_real.nodeType == child_xml_real.ELEMENT_NODE:
@@ -325,14 +324,17 @@ def xml2rna(
                     del child_xml_real
 
                     if hasattr(subvalue, "__len__"):
-                        # Collection
+                        # adjustment collection length
+                        if(xml_node.nodeName == "ColorRamp" and child_xml.nodeName == "elements"):
+                            diff_count = len(elems) - len(subvalue)
+                            for x in range(diff_count):
+                                subvalue.new(0)
                         if len(elems) != len(subvalue):
                             print("Size Mismatch! collection:", child_xml.nodeName)
                         else:
                             for i in range(len(elems)):
                                 child_xml_real = elems[i]
                                 subsubvalue = subvalue[i]
-
                                 if child_xml_real is None or subsubvalue is None:
                                     print("None found %s - %d collection:", (child_xml.nodeName, i))
                                 else:
