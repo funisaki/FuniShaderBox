@@ -24,9 +24,11 @@ class FSBImportOperator(bpy.types.Operator):
                 fromSocketId = xml.getElementsByTagName("from_socket")[0].childNodes[1].attributes["identifier"].value
                 toNodeId = xml.attributes["to_node"].value.split("::")[1]
                 toSocketId = xml.getElementsByTagName("to_socket")[0].childNodes[1].attributes["identifier"].value
+                fromSocket = node_tree.nodes.get(fromNodeId).outputs[0]
                 for inp in node_tree.nodes.get(fromNodeId).outputs:
                     if(fromSocketId == inp.identifier):
                         fromSocket = inp
+                toSocket = node_tree.nodes.get(toNodeId).inputs[0]
                 for inp in node_tree.nodes.get(toNodeId).inputs:
                     if(toSocketId == inp.identifier):
                         toSocket = inp
