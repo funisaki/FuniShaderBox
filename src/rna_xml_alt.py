@@ -316,6 +316,8 @@ def xml2rna(
         for child_xml in xml_node.childNodes:
             if child_xml.nodeType == child_xml.ELEMENT_NODE:
                 subvalue = getattr(value, child_xml.nodeName, None)
+                if(xml_node.nodeName == "ShaderNodeGroup"):
+                    value.node_tree = bpy.data.node_groups[xml_node.attributes["node_tree"].value.split("::")[1]]
                 if subvalue is not None:
                     elems = []
                     for child_xml_real in child_xml.childNodes:
