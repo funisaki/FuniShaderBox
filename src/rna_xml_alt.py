@@ -247,6 +247,7 @@ def rna2xml(
 def xml2rna(
         root_xml, *,
         root_rna=None,  # must be set
+        node_group_map={}
 ):    
     def rna2xml_node(xml_node, value):
         # print("evaluating:", xml_node.nodeName)
@@ -317,7 +318,7 @@ def xml2rna(
             if child_xml.nodeType == child_xml.ELEMENT_NODE:
                 subvalue = getattr(value, child_xml.nodeName, None)
                 if(xml_node.nodeName == "ShaderNodeGroup"):
-                    value.node_tree = bpy.data.node_groups[xml_node.attributes["node_tree"].value.split("::")[1]]
+                    value.node_tree = bpy.data.node_groups[node_group_map[xml_node.attributes["node_tree"].value.split("::")[1]]]
                 if subvalue is not None:
                     elems = []
                     for child_xml_real in child_xml.childNodes:

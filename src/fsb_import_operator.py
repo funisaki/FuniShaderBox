@@ -17,7 +17,7 @@ class FSBImportOperator(bpy.types.Operator):
             root_xml = node_group_xml.getElementsByTagName("ShaderNodeTree")[0]
             self.createNodesAndLinks(new_group, root_xml,type="NODE")
             self.createNodesAndLinks(new_group, root_xml,type="LINK")
-            rna_xml_alt.xml2rna(root_xml, root_rna=new_group)
+            rna_xml_alt.xml2rna(root_xml, root_rna=new_group, node_group_map=self.node_group_map)
             self.createNodesAndLinks(new_group, root_xml,type="LINK")
 
     def createNodesAndLinks(self,node_tree,root_xml, type="NODE"):
@@ -75,7 +75,7 @@ class FSBImportOperator(bpy.types.Operator):
                 material.node_tree.nodes.remove(n)
             self.createNodesAndLinks(material.node_tree, root_xml, type="NODE")
             self.createNodesAndLinks(material.node_tree, root_xml, type="LINK")
-            rna_xml_alt.xml2rna(root_xml, root_rna=material.node_tree)
+            rna_xml_alt.xml2rna(root_xml, root_rna=material.node_tree, node_group_map=self.node_group_map)
             self.createNodesAndLinks(material.node_tree, root_xml, type="LINK")
         
         return{'FINISHED'}
