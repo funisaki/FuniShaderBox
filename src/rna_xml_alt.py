@@ -297,11 +297,12 @@ def xml2rna(
                     tp_name = 'ARRAY'
 #                print("  %s.%s (%s) --- %s" % (type(value).__name__, attr, tp_name, subvalue_type))
                 try:
-                    setattr(value, attr, value_xml_coerce)
+                    if(attr != "bl_idname"):
+                        setattr(value, attr, value_xml_coerce)
                 except AttributeError:
-                    print("AttributeError")
+                    pass
                 except TypeError:
-                    print("TypeError")
+                    pass
                 except ValueError:
                     # size mismatch
                     val = getattr(value, attr)
@@ -314,7 +315,6 @@ def xml2rna(
         # Complex attributes
         for child_xml in xml_node.childNodes:
             if child_xml.nodeType == child_xml.ELEMENT_NODE:
-                print(child_xml.nodeName)
                 subvalue = getattr(value, child_xml.nodeName, None)
                 if subvalue is not None:
                     elems = []
