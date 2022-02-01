@@ -1,6 +1,6 @@
 import os
 import bpy
-from .src import (fsb_panel_view, fsb_import_operator, fsb_upload_operator)
+from .src import (fsb_panel_view, fsb_import_operator, fsb_upload_operator, link_to_operator)
 
 bl_info = {
     "name": "ShaderBox",
@@ -10,13 +10,15 @@ bl_info = {
     "location": "File > Import-Export",
     "description": "",
     "warning": "",
-    "support": "TESTING",
     "wiki_url": "",
     "tracker_url": "https://github.com/funisaki/FuniShaderBox/issues",
     "category": "Import-Export",
 }
 
 classes = [
+    link_to_operator.FSBLinkToDiscordOperator,
+    link_to_operator.FSBLinkToTwitterOperator,
+    link_to_operator.FSBLinkToWebOperator,
     fsb_upload_operator.FSBUploadOperator,
     fsb_import_operator.FSBImportOperator,
     fsb_panel_view.FSBPanelView
