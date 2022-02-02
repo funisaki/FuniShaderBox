@@ -67,6 +67,9 @@ class FSBUploadOperator(bpy.types.Operator):
         temp_path = bpy.app.tempdir
         preview_file_path = temp_path + "funishaderboxpreviewresult.png"
         material = bpy.context.active_object.active_material
+        if(material == None):
+            self.report({'ERROR'},"マテリアルが選択されていません。")
+            return {'FINISHED'}
         valid = self.check_nodes(material.node_tree.nodes)
         if(not valid):
             return{'FINISHED'} 
