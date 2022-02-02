@@ -17,18 +17,28 @@ class FSBUploadOperator(bpy.types.Operator):
     bl_category = "ShaderBox"
 
     def delete_preview_scene(self, scene):
-        bpy.data.lights.remove(bpy.data.lights[-1])
-        bpy.data.cameras.remove(bpy.data.cameras[-1])
-        bpy.data.objects.remove(scene.objects[0])
-        bpy.data.objects.remove(scene.objects[0])
+        collection = bpy.data.collections[-1]
+        all_objects = collection.all_objects
+        for obj in all_objects:
+            if(obj.type == "LIGHT"):
+                bpy.data.objects.remove(obj)
+                bpy.data.lights.remove(bpy.data.lights[-1])
+                break
+        for obj in all_objects:
+            if(obj.type == "CAMERA"):
+                bpy.data.objects.remove(obj)
+                bpy.data.cameras.remove(bpy.data.cameras[-1])
+                break
+        for obj in range(len(all_objects)):
+            bpy.data.objects.remove(all_objects[-1])
         bpy.data.collections.remove(bpy.data.collections[-1])
         bpy.data.worlds.remove(bpy.data.worlds[-1])
-        bpy.data.linestyles.remove(bpy.data.linestyles[-1])
-        bpy.data.meshes.remove(bpy.data.meshes[-1])
-        bpy.data.meshes.remove(bpy.data.meshes[-1])
-        bpy.data.materials.remove(bpy.data.materials[-1])
-        bpy.data.materials.remove(bpy.data.materials[-1])
-        bpy.data.materials.remove(bpy.data.materials[-1])
+        for mesh in bpy.data.meshes:
+            if(mesh.name.split('.')[0] == "__FSBFloor__" or mesh.name.split('.')[0] == "__FSBSample__"):
+                bpy.data.meshes.remove(mesh)
+        for mats in bpy.data.materials:
+            if(mats.name.split('.')[0] == "__FSBFloor1__" or mats.name.split('.')[0] == "__FSBFloor2__"):
+                bpy.data.materials.remove(mats)
         bpy.ops.scene.delete({"scene": scene})
     
     def read_node_tree(self, temp_path, node_tree, tree_list):
@@ -54,7 +64,6 @@ class FSBUploadOperator(bpy.types.Operator):
 
     IGNORE_LIST=["GROUP", "TEX_IMAGE"]
     def check_nodes(self,nodes):
-        print(nodes)
         msgs = {"GROUP": "グループノード","TEX_IMAGE": "画像テクスチャノード"}
         for node in nodes:
             if(node.type in self.IGNORE_LIST):
