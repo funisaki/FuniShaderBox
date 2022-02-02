@@ -52,10 +52,24 @@ class FSBUploadOperator(bpy.types.Operator):
             if(n.type == "GROUP"):
                 self.read_node_tree(temp_path, n.node_tree, tree_list)
 
+    IGNORE_LIST=["GROUP", "TEX_IMAGE"]
+    def check_nodes(self,nodes):
+        print(nodes)
+        msgs = {"GROUP": "グループノード","TEX_IMAGE": "画像テクスチャ"}
+        for node in nodes:
+            if(node.type in self.IGNORE_LIST):
+                self.report({'ERROR'},msgs[node.type]+"が含まれているためアップロード出来ません.")
+                return False
+
+        return True
+        
     def execute(self, context):
         temp_path = bpy.app.tempdir
         preview_file_path = temp_path + "funishaderboxpreviewresult.png"
         material = bpy.context.active_object.active_material
+        valid = self.check_nodes(material.node_tree.nodes)
+        if(not valid):
+            return{'FINISHED'} 
 
         bpy.ops.wm.append(filepath=PREVIEW_SCENE_PATH + "ShaderBoxPreviewScene", directory=PREVIEW_SCENE_PATH, filename="ShaderBoxPreviewScene")
         preview_scene = bpy.data.scenes[-1]
