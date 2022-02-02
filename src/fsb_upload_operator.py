@@ -55,7 +55,7 @@ class FSBUploadOperator(bpy.types.Operator):
     IGNORE_LIST=["GROUP", "TEX_IMAGE"]
     def check_nodes(self,nodes):
         print(nodes)
-        msgs = {"GROUP": "グループノード","TEX_IMAGE": "画像テクスチャ"}
+        msgs = {"GROUP": "グループノード","TEX_IMAGE": "画像テクスチャノード"}
         for node in nodes:
             if(node.type in self.IGNORE_LIST):
                 self.report({'ERROR'},msgs[node.type]+"が含まれているためアップロード出来ません.")
